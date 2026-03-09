@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Cukai LHDN 2025</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-dark: #1a237e;
+            --accent-orange: #ff9800;
+            --success-green: #2e7d32;
+        }
+        body { background-color: #f0f2f5; font-family: 'Inter', sans-serif; color: #333; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; }
+        .header-section { background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); color: white; padding: 30px; }
+        
+        .section-title { 
+            font-size: 1.1rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            color: var(--primary-dark); 
+            border-bottom: 2px solid #e8eaf6;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .input-group-text { background-color: #f8f9fa; border-right: none; color: #666; }
+        .form-control { border-left: none; transition: all 0.3s; }
+        .form-control:focus { box-shadow: none; border-color: var(--primary-dark); background-color: #fff; }
+        .form-control:focus + .input-group-text { border-color: var(--primary-dark); }
+
+        .result-card { border-radius: 12px; transition: transform 0.2s; }
+        .result-card:hover { transform: translateY(-2px); }
+        .bg-income { background-color: #e3f2fd; border: 1px solid #bbdefb; }
+        .bg-tax { background-color: #fff3e0; border: 1px solid #ffe0b2; }
+        .bg-final { background: var(--primary-dark); color: white; }
+        .bg-refund { background: var(--success-green); color: white; }
+
+        .pelepasan-row { padding: 8px 0; border-bottom: 1px solid #f1f1f1; align-items: center; }
+        .pelepasan-row:last-child { border-bottom: none; }
+        
+        .table-custom { font-size: 0.85rem; border-radius: 8px; overflow: hidden; }
+        .table-custom thead { background-color: var(--primary-dark); color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="card">
+        <div class="header-section text-center">
+            <h2 class="fw-bold mb-1"><i class="bi bi-calculator-fill me-2"></i>Simulasi Cukai Pendapatan</h2>
+            <p class="mb-0 opacity-75">Tahun Taksiran 2025 (Individu Berpemastautin)</p>
+        </div>
+        
+        <div class="card-body p-lg-5">
+            <div class="row g-5">
+                <div class="col-lg-7">
+                    <h5 class="section-title"><i class="bi bi-wallet2 me-2"></i>1. Maklumat Pendapatan</h5>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Jumlah Pendapatan Kasar Tahunan</label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">RM</span>
+                            <input type="number" id="pendapatan" class="form-control fw-bold" value="0" oninput="kiraCukai()">
+                        </div>
+                        <div class="form-text text-muted mt-2">Termasuk gaji, bonus, elaun, dan komisen.</div>
+                    </div>
+
+                    <h5 class="section-title mt-5"><i class="bi bi-shield-check me-2"></i>2. Pelepasan Cukai</h5>
+                    <div class="pelepasan-container bg-white p-3 rounded border">
+                        <div class="row pelepasan-row">
+                            <div class="col-8 small fw-medium text-secondary">Pelepasan Individu (Automatik)</div>
+                            <div class="col-4"><input type="number" class="form-control form-control-sm text-end pelepasan-item" value="9000" oninput="kiraCukai()"></div>
+                        </div>
+                        <div class="row pelepasan-row">
+                            <div class="col-8 small fw-medium text-secondary">Perubatan (Diri/Pasangan/Anak)</div>
+                            <div class="col-4"><input type="number" class="form-control form-control-sm text-end pelepasan-item" value="0" oninput="kiraCukai()"></div>
+                        </div>
+                        <div class="row pelepasan-row">
+                            <div class="col-8 small fw-medium text-secondary">Rawatan Pergigian / Kesihatan</div>
+                            <div class="col-4"><input type="number" class="form-control form-control-sm text-end pelepasan-item" value="0" oninput="kiraCukai()"></div>
+                        </div>
+                        <div class="row pelepasan-row">
+                            <div class="col-8 small fw-medium text-secondary">Gaya Hidup (Buku/Gajet/Sukan)</div>
+                            <div class="col-4"><input type="number" class="form-control form-control-sm text-end pelepasan-item" value="0" oninput="kiraCukai()"></div>
+                        </div>
+                        <div class="row pelepasan-row">
+                            <div class="col-8 small fw-medium text-secondary">Bayaran Alimoni Pasangan</div>
+                            <div class="col-4"><input type="number" class="form-control form-control-sm text-end pelepasan-item" value="4000" oninput="kiraCukai()"></div>
+                        </div>
+                        <div class="row pelepasan-row">
+                            <div class="col-8 small fw-medium text-secondary">Anak (< 18 Tahun)</div>
+                            <div class="col-4"><input type="number" class="form-control form-control-sm text-end pelepasan-item" value="2000" oninput="kiraCukai()"></div>
+                        </div>
+                        <div class="row pelepasan-row">
+                            <div class="col-8 small fw-medium text-secondary">Anak (> 18 Tahun - Pendidikan)</div>
+                            <div class="col-4"><input type="number" class="form-control form-control-sm text-end pelepasan-item" value="8000" oninput="kiraCukai()"></div>
+                        </div>
+                        <div class="row pelepasan-row">
+                            <div class="col-8 small fw-medium text-secondary">Insurans Pendidikan / Perubatan</div>
+                            <div class="col-4"><input type="number" class="form-control form-control-sm text-end pelepasan-item" value="0" oninput="kiraCukai()"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 p-3 bg-light rounded d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-secondary">JUMLAH PELEPASAN:</span>
+                        <span id="jumlahPelepasanTeks" class="h5 mb-0 fw-bold text-primary">RM 0.00</span>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <h5 class="section-title"><i class="bi bi-pie-chart-fill me-2"></i>3. Analisis Hasil</h5>
+                    
+                    <div class="result-card bg-income p-3 mb-3">
+                        <div class="small text-primary fw-bold">PENDAPATAN BERCUKAI</div>
+                        <div class="h3 mb-0 fw-bold" id="pendapatanBercukai">0.00</div>
+                    </div>
+
+                    <div class="p-3 border rounded mb-3 small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Cukai Dasar</span>
+                            <span class="fw-bold" id="cukaiPertama">0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Cukai Atas Baki (<span id="kadarTeks">0</span>%)</span>
+                            <span class="fw-bold" id="cukaiBaki">0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between border-top pt-2">
+                            <span class="fw-bold">Jumlah Cukai Asal</span>
+                            <span class="fw-bold text-dark" id="jumlahCukai">0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="small fw-bold text-secondary mb-1">Potongan Zakat / Fitrah (RM)</label>
+                        <input type="number" id="zakat" class="form-control text-end border-warning" value="0" oninput="kiraCukai()">
+                    </div>
+
+                    <div class="result-card bg-final p-3 mb-3 text-center">
+                        <div class="small opacity-75 fw-bold uppercase">Cukai Kena Dibayar</div>
+                        <div class="h3 mb-0 fw-bold text-warning" id="cukaiDikenakan">0.00</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="small fw-bold text-secondary mb-1">Jumlah PCB Telah Dibayar (RM)</label>
+                        <input type="number" id="pcb" class="form-control text-end border-success" value="0" oninput="kiraCukai()">
+                    </div>
+
+                    <div class="result-card bg-refund p-4 text-center">
+                        <div class="small opacity-75 fw-bold">ANGGARAN LEBIHAN (REFUND)</div>
+                        <div class="h2 mb-0 fw-bold" id="lebihanBayaran">0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-5 border-top">
+                <h5 class="section-title text-center mb-4">Jadual Rujukan Cukai (Kategori E-G)</h5>
+                <div class="table-responsive mx-auto shadow-sm" style="max-width: 850px;">
+                    <table class="table table-custom table-bordered table-hover align-middle text-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>Kategori</th>
+                                <th>Banjaran Pendapatan (RM)</th>
+                                <th>Pengiraan (RM)</th>
+                                <th>Kadar</th>
+                                <th>Cukai (RM)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="2" class="fw-bold">E</td>
+                                <td rowspan="2">50,001 - 70,000</td>
+                                <td class="text-muted">50,000 Pertama</td>
+                                <td>-</td>
+                                <td>1,500</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">20,000 Berikutnya</td>
+                                <td class="fw-bold">11%</td>
+                                <td>2,200</td>
+                            </tr>
+                            <tr class="table-light">
+                                <td rowspan="2" class="fw-bold border-start-0">F</td>
+                                <td rowspan="2">70,001 - 100,000</td>
+                                <td class="text-muted">70,000 Pertama</td>
+                                <td>-</td>
+                                <td>3,700</td>
+                            </tr>
+                            <tr class="table-light">
+                                <td class="text-muted">30,000 Berikutnya</td>
+                                <td class="fw-bold">19%</td>
+                                <td>5,700</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4 text-muted small">
+        &copy; 2026 Kalkulator Pintar Cukai LHDN. Rekabentuk untuk tujuan pendidikan sahaja.
+    </div>
+</div>
+
+<script>
+function kiraCukai() {
+    let elemenPelepasan = document.getElementsByClassName('pelepasan-item');
+    let jumlahPelepasan = 0;
+    for (let i = 0; i < elemenPelepasan.length; i++) {
+        jumlahPelepasan += parseFloat(elemenPelepasan[i].value) || 0;
+    }
+    document.getElementById('jumlahPelepasanTeks').innerText = "RM " + jumlahPelepasan.toLocaleString('en-GB', {minimumFractionDigits: 2});
+
+    let pendapatan = parseFloat(document.getElementById('pendapatan').value) || 0;
+    let pendapatanBercukai = Math.max(0, pendapatan - jumlahPelepasan);
+    document.getElementById('pendapatanBercukai').innerText = "RM " + pendapatanBercukai.toLocaleString('en-GB', {minimumFractionDigits: 2});
+
+    let cukaiDasar = 0, kadar = 0, hadBawah = 0;
+
+    if (pendapatanBercukai <= 35000) {
+        cukaiDasar = 0; kadar = 0; hadBawah = 0;
+    } else if (pendapatanBercukai <= 50000) {
+        cukaiDasar = 600; kadar = 0.06; hadBawah = 35000;
+    } else if (pendapatanBercukai <= 70000) {
+        cukaiDasar = 1500; kadar = 0.11; hadBawah = 50000;
+    } else if (pendapatanBercukai <= 100000) {
+        cukaiDasar = 3700; kadar = 0.19; hadBawah = 70000;
+    } else {
+        cukaiDasar = 9400; kadar = 0.25; hadBawah = 100000;
+    }
+
+    let baki = Math.max(0, pendapatanBercukai - hadBawah);
+    let cukaiAtasBaki = baki * kadar;
+    let jumlahCukaiAsal = cukaiDasar + cukaiAtasBaki;
+
+    document.getElementById('cukaiPertama').innerText = "RM " + cukaiDasar.toLocaleString('en-GB', {minimumFractionDigits: 2});
+    document.getElementById('kadarTeks').innerText = (kadar * 100);
+    document.getElementById('cukaiBaki').innerText = "RM " + cukaiAtasBaki.toLocaleString('en-GB', {minimumFractionDigits: 2});
+    document.getElementById('jumlahCukai').innerText = "RM " + jumlahCukaiAsal.toLocaleString('en-GB', {minimumFractionDigits: 2});
+
+    let zakat = parseFloat(document.getElementById('zakat').value) || 0;
+    let zakatBolehTolak = Math.min(zakat, jumlahCukaiAsal);
+    let cukaiDikenakan = Math.max(0, jumlahCukaiAsal - zakatBolehTolak);
+    document.getElementById('cukaiDikenakan').innerText = "RM " + cukaiDikenakan.toLocaleString('en-GB', {minimumFractionDigits: 2});
+
+    let pcb = parseFloat(document.getElementById('pcb').value) || 0;
+    let lebihan = pcb - cukaiDikenakan;
+    document.getElementById('lebihanBayaran').innerText = "RM " + lebihan.toLocaleString('en-GB', {minimumFractionDigits: 2});
+}
+window.onload = kiraCukai;
+</script>
+
+</body>
+</html>
